@@ -1,8 +1,9 @@
 #main.py
 from flask import Flask, make_response, jsonify, request
+from flask import send_from_directory
 from models import ma, db, User, user_schema, users_schema, Transaction, transaction_schema, transactions_schema, Reward, reward_schema, rewards_schema
 from flask_cors import CORS
-app = Flask(__name__)
+app = Flask(__name__,static_folder='client/build/',static_url_path='')
 CORS(app)
 
 # Google Cloud SQL (change this accordingly)
@@ -26,6 +27,11 @@ db.init_app(app)
 ma.init_app(app)
 with app.app_context():
     db.create_all()
+
+@app.route('/')
+def serve():
+    return send_from_directory(app.static_folder, 'index.html')
+
 
 @app.route('/api/register', methods =['POST'])
 def register():
